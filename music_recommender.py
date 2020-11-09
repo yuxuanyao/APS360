@@ -2,7 +2,7 @@ import spotipy
 import sys
 import random
 
-class Recommender:
+class MusicRecommender:
     def __init__(self, username, mood):
         self.auth_scope = 'user-library-read user-top-read user-follow-read playlist-modify-public'
         self.redirect_uri = 'http://localhost:8888/callback'
@@ -27,7 +27,6 @@ class Recommender:
         if token:
             self.sp = spotipy.Spotify(auth=token)
         else:
-            print("Usage: recommender <username> <mood>")
             raise Exception("Authentication failure")
     
     def get_top_tracks(self):
@@ -45,9 +44,6 @@ class Recommender:
         return top_tracks_uri
     
     def get_mood_tracks(self):
-        if self.music_type == "None":
-            return []
-        
         mood_tracks_uri = []
         top_tracks = self.get_top_tracks()
         top_tracks_batch = [top_tracks[i:i+50] for i in range(0, len(top_tracks), 50)]
@@ -55,13 +51,12 @@ class Recommender:
         for batch in top_tracks_batch:
             top_tracks_data = self.sp.audio_features(batch)
             for track in top_tracks_data:
-                if mood == "calm":
+                if self.music_type == "Calm":
                     if (0.25 <= track["valence"] <= 0.5
                     and track["danceability"] <= 0.25
                     and track["energy"] <= 0.25):
                         mood_tracks_uri.append(track["uri"])
-                # mood == "happy"
-                else:
+                elif self.music_type == "Cheerful":
                     if (0.75 <= track["valence"] <= 1
                     and track["danceability"] <= 0.75
                     and track["energy"] <= 0.75):
@@ -70,6 +65,11 @@ class Recommender:
         return mood_tracks_uri	
     
     def get_playlist(self):
+        if self.music_type == "None":
+            return
+        
+        self.authenticate()
+
         user_data = self.sp.current_user()
         user_id = user_data["id"]
         
@@ -87,9 +87,9 @@ if __name__ == '__main__':
         username = sys.argv[1]
         mood = sys.argv[2]
     else:
+        print("Usage: python music_recommender.py <username> <mood>")
         sys.exit()
 
-    recommender = Recommender(username, mood)
-    recommender.authenticate()
+    recommender = MusicRecommender(username, mood)
     playlist_id = recommender.get_playlist()
     print(playlist_id)
