@@ -29,37 +29,53 @@ class MusicRecommender:
         else:
             raise Exception("Authentication failure")
     
-    def get_top_tracks(self):
-        top_tracks_uri = []
+    def get_top_artists(self):
+        top_artists_name = set()
+        top_artists_uri = []
         top_artists_data = self.sp.current_user_top_artists(limit=50, time_range="long_term")
         top_artists = top_artists_data["items"]
 
         for top_aritist in top_artists:
-            top_artists_uri = top_aritist["uri"]
-            top_tracks_data = self.sp.artist_top_tracks(top_artists_uri)
+            top_artists_name.add(top_aritist["name"])
+            top_artists_uri.append(top_aritist["uri"])
+            related_artist_data = self.sp.artist_related_artists(top_aritist["uri"])
+            related_artists = related_artist_data["artists"][:4]
+            for related_artist in related_artists:
+                if related_artist["name"] not in top_artists_name:
+                    top_artists_name.add(related_artist["name"])
+                    top_artists_uri.append(related_artist["uri"])
+
+        return top_artists_uri
+
+    def get_top_tracks(self):
+        top_tracks_uri = []
+        top_artists = self.get_top_artists()
+        
+        for top_artist in top_artists:
+            top_tracks_data = self.sp.artist_top_tracks(top_artist)
             top_tracks = top_tracks_data["tracks"]
             for top_track in top_tracks:
                 top_tracks_uri.append(top_track["uri"])
-        
+
         return top_tracks_uri
     
     def get_mood_tracks(self):
         mood_tracks_uri = []
         top_tracks = self.get_top_tracks()
-        top_tracks_batch = [top_tracks[i:i+50] for i in range(0, len(top_tracks), 50)]
+        top_tracks_batch = [top_tracks[i:i+100] for i in range(0, len(top_tracks), 100)]
 
         for batch in top_tracks_batch:
             top_tracks_data = self.sp.audio_features(batch)
             for track in top_tracks_data:
                 if self.music_type == "Calm":
-                    if (0.25 <= track["valence"] <= 0.5
-                    and track["danceability"] <= 0.25
-                    and track["energy"] <= 0.25):
+                    if (0.25 <= track["valence"] <= 0.75
+                    and track["danceability"] <= 0.5
+                    and track["energy"] <= 0.5):
                         mood_tracks_uri.append(track["uri"])
                 elif self.music_type == "Cheerful":
                     if (0.75 <= track["valence"] <= 1
-                    and track["danceability"] <= 0.75
-                    and track["energy"] <= 0.75):
+                    and track["danceability"] >= 0.7
+                    and track["energy"] >= 0.7):
                         mood_tracks_uri.append(track["uri"])
 
         return mood_tracks_uri	
