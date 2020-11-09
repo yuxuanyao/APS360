@@ -4,10 +4,10 @@ import random
 
 class MusicRecommender:
     def __init__(self, username, mood):
-        self.auth_scope = 'user-library-read user-top-read user-follow-read playlist-modify-public'
-        self.redirect_uri = 'http://localhost:8888/callback'
-        self.client_id = '6bffe904daf84df28e5ec76f6401d2ce'
-        self.client_secret = '9d66b726b8f24e1b88d81ac84110495c'
+        self.auth_scope = "user-library-read user-top-read user-follow-read playlist-modify-public"
+        self.redirect_uri = "http://localhost:8888/callback"
+        self.client_id = "6bffe904daf84df28e5ec76f6401d2ce"
+        self.client_secret = "9d66b726b8f24e1b88d81ac84110495c"
         self.username = username
         self.mood_to_music_type = {
             0: "Calm",
@@ -32,14 +32,14 @@ class MusicRecommender:
     def get_top_tracks(self):
         top_tracks_uri = []
         top_artists_data = self.sp.current_user_top_artists(limit=50, time_range="long_term")
-        top_artists = top_artists_data['items']
+        top_artists = top_artists_data["items"]
 
         for top_aritist in top_artists:
-            top_artists_uri = top_aritist['uri']
+            top_artists_uri = top_aritist["uri"]
             top_tracks_data = self.sp.artist_top_tracks(top_artists_uri)
-            top_tracks = top_tracks_data['tracks']
+            top_tracks = top_tracks_data["tracks"]
             for top_track in top_tracks:
-                top_tracks_uri.append(top_track['uri'])
+                top_tracks_uri.append(top_track["uri"])
         
         return top_tracks_uri
     
@@ -82,7 +82,7 @@ class MusicRecommender:
 
         return playlist_id
 		
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) > 1:
         username = sys.argv[1]
         mood = sys.argv[2]
