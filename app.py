@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, flash, request
 from music_recommender import MusicRecommender
 from werkzeug.utils import secure_filename
+from model import preprocess, predict
 
 UPLOAD_FOLDER = "./uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
@@ -27,15 +28,19 @@ def music_recommender():
         flash("Missing username or file")
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(filepath)
         valid = True
     
     if valid:
-        # run ml here:
-        # mood = model()
+        # preprocess image
+        tensor = preprocess(filepath)
+        # run model:
+        result = predict(tensor)
         # delete uploaded image
+        os.remove(filepath)
         
-        recommender = MusicRecommender(username, 4)
+        recommender = MusicRecommender(username, result)
         playlist_id = recommender.get_playlist()
         return render_template("playlist.html", playlist_id=playlist_id)
     
