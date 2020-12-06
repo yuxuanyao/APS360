@@ -1,6 +1,17 @@
-<div>
-    <h1>Welcome!</h1>
-    <p>Recommended Playlist:</p>
+{% extends "layout.html" %}
+{% block body %}
+ 
+<div class="title">
+    <h1>Recommended Playlist</h1>
+    
+    <div class="playlist">
+        <form action="{{ url_for('home') }}">
+            <input type="button" value="Open in Spotify" onclick="window.location.href='spotify:playlist:{{playlist_id}}'">
+            <input type="submit" value="Try Again">
+        </form>
+    </div>
+    
+    <iframe src="https://open.spotify.com/embed/playlist/{{playlist_id}}" width="500" height="500" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>    
 </div>
 
-<iframe src="https://open.spotify.com/embed/playlist/{{playlist_id}}" width="500" height="500" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+{% endblock %}

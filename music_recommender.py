@@ -3,29 +3,21 @@ import sys
 import random
 
 class MusicRecommender:
-    def __init__(self, username, mood):
-        self.auth_scope = "user-library-read user-top-read user-follow-read playlist-modify-public"
-        self.redirect_uri = "http://localhost:8888/callback"
-        self.client_id = "6bffe904daf84df28e5ec76f6401d2ce"
-        self.client_secret = "9d66b726b8f24e1b88d81ac84110495c"
-        self.username = username
+    def __init__(self, token, mood):
+        self.token = token
         self.mood_to_music_type = {
             0: "Calm",
             1: "Calm",
-            2: "Calm",
-            3: "None",
-            4: "Cheerful",
-            5: "Calm",
-            6: "None"
+            2: "None",
+            3: "Cheerful",
+            4: "Calm",
+            5: "None"        
         }
         self.music_type = self.mood_to_music_type[int(mood)]
 
     def authenticate(self):
-        token = spotipy.util.prompt_for_user_token(self.username, self.auth_scope, client_id = self.client_id, 
-            client_secret = self.client_secret, redirect_uri = self.redirect_uri)
-        
-        if token:
-            self.sp = spotipy.Spotify(auth=token)
+        if self.token:
+            self.sp = spotipy.Spotify(auth=self.token)
         else:
             raise Exception("Authentication failure")
     
@@ -97,15 +89,3 @@ class MusicRecommender:
         self.sp.user_playlist_add_tracks(user_id, playlist_id, mood_tracks[:50])
 
         return playlist_id
-		
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        username = sys.argv[1]
-        mood = sys.argv[2]
-    else:
-        print("Usage: python music_recommender.py <username> <mood>")
-        sys.exit()
-
-    recommender = MusicRecommender(username, mood)
-    playlist_id = recommender.get_playlist()
-    print(playlist_id)

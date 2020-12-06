@@ -4,7 +4,7 @@ import torchvision.models as models
 from PIL import Image
 from torchvision import transforms
 
-PATH = "./model_Resnet50_bs128_lr0_001_epoch5.pt"
+PATH = "./model_Resnet50-Pretrained-12000-Dropout_bs128_lr0_001_epoch5-58-FER.pt"
 
 def preprocess(filepath):
     img = Image.open(filepath).convert("RGB")
@@ -12,10 +12,7 @@ def preprocess(filepath):
         transforms.Resize(48),
         transforms.CenterCrop(48),
         transforms.ToTensor(),
-        transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )])
+      ])
     img_preprocessed = preprocess(img)
     img_tensor = torch.unsqueeze(img_preprocessed, 0)
     return img_tensor
@@ -23,16 +20,24 @@ def preprocess(filepath):
 def predict(tensor):
     resnet50 = models.resnet50(pretrained=True)
     num_ftrs = resnet50.fc.in_features
-    resnet50.fc = nn.Linear(num_ftrs, 7)
+    # resnet50.fc = nn.Linear(num_ftrs, 7)
+    resnet50.fc = nn.Sequential(
+        nn.Linear(num_ftrs, 1000),
+        nn.ReLU(True),
+        nn.Dropout(0.4),
+        nn.Linear(1000, 50),
+        nn.ReLU(True),
+        nn.Dropout(0.4),
+        nn.Linear(50, 6)
+    )
     resnet50.load_state_dict(torch.load(PATH, map_location='cpu'))
     resnet50.eval()
     out = resnet50(tensor)
-    _, index = torch.max(out, 1)
-    # percentage = nn.functional.softmax(out, dim=1)[0] * 100
-    return index[0]
+    pred = out.max(1, keepdim=True)[1]
+    return pred
 
 if __name__ == "__main__":
-    tensor = preprocess("./test/test.jpg")
+    tensor = preprocess("./test/test3.png")
     result = predict(tensor)
     print(result)
 
