@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="title">
+    <h1>You're doing great!</h1>
+    
+    
+    <h3>Your mood doesn't need to be regulated by music :)</h3>
+    
+    <div class="btn">
+        <form action="{{ url_for('home') }}">
+            <input type="submit" value="Try Again">
+        </form>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+<html>
+<head>
+    <title>Music for Drivers</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Roboto&display=swap" rel="stylesheet">
+<style>
+    h2 {
+        font-family: 'Montserrat', sans-serif;
+        padding: 2%;
+        color: #f3f3f3;
+        background-color: #648F00;
+        font-size: 20px;
+    }
+
+    h3 { 
+        padding-bottom: 1%;
+    }
+
+    h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 40px;
+        color:#648F00;
+        padding-top: 2%;
+    }
+
+    body{
+        text-align: center;  
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        color: black;
+        margin: 0 auto;
+    }
+
+    .row {
+        padding-left: 18%;
+        padding-right: 18%;
+        padding-bottom: 1%;
+    }
+
+    .column {
+        float: left;
+        width: 33.33%;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    input[type=file] {
+        border: 2px solid #648F00; border-radius: 2px; color: black; padding-left: 10px; padding: 16px 32px; text-decoration: none; text-align: center; margin: 4px 2px; cursor: pointer; position: relative;
+    }
+
+    input[type=button], input[type=submit], input[type=reset] {
+        background-color: #648F00; color: white; padding-left: 10px; padding: 16px 32px;
+        text-decoration: none; margin: 4px 2px; 
+        cursor: pointer; position: relative;
+        border: 3px solid #648F00;
+    }
+
+    .loader {
+	position: center; margin: auto; border: 16px solid #f3f3f3; border-top: 16px solid #648F00;
+    border-radius: 50%; width: 60px; height: 60px;
+    animation: spin 2s linear infinite;
+    }
+
+    input {
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+    }
+
+    .btn {
+        /* padding-top: 1%; */
+        padding-bottom: 3%;
+    }
+
+    .playlist{
+        padding-bottom: 1%;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .header{
+        background-color: #648F00;
+        height: 18%;
+    }
+
+    .header img{
+        margin-top: 10px;
+    }
+
+    .title{
+        margin-top: -20px;
+    }
+
+</style>
+</head>
+<body>
+    <div class="header">
+        <img src="/static/logo.jpg" height=100>
+    </div>
+ {% block body %}{% endblock %}
+</body>
+</html>

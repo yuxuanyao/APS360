@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="title">
+    <h1>Welcome!</h1>
+    
+    <div class="row">
+        <div class="column"><p>1. Login with Spotify to get your top artists and tracks.</p></div>
+        <div class="column"><p>2. Upload an image of the driver.</p></div>
+        <div class="column"><p>3. Get your personalized playlist!</p></div>
+    </div>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <input type="image" src="https://uptune.herokuapp.com/assets/login-button-mobile-82c2ef9bca0473f7f2ce860eca70cfb7318b25edf58d27994a0a5f5ae1a5d6f4.png" height=80>
+        <!-- <input type="submit" value="Login with Spotify"> -->
+    </form>
+</div>
+
+{% endblock %}
